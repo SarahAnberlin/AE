@@ -33,6 +33,8 @@ parser.add_argument('--weight-save-dir', type=str, default='./weights', metavar=
                     help='directory to save model weights (default: ./weights)')
 parser.add_argument('--plot-save-dir', type=str, default='./plots', metavar='DIR',
                     help='directory to save training and validation plots (default: ./plots)')
+parser.add_argument('--dataset-root', type=str, default='../../Dataset', metavar='DIR',
+                    help='root directory of CIFAR-10 dataset (default: ../../Dataset)')
 args = parser.parse_args()
 
 # Define hyperparameters
@@ -45,6 +47,7 @@ validate_interval = args.validate_interval
 image_save_dir = args.image_save_dir
 weight_save_dir = args.weight_save_dir
 plot_save_dir = args.plot_save_dir
+dataset_root = args.dataset_root
 
 # Ensure directories exist, create if not
 os.makedirs(image_save_dir, exist_ok=True)
@@ -69,6 +72,7 @@ print(f"Validate Interval: {validate_interval}")
 print(f"Image Save Directory: {image_save_dir}")
 print(f"Weight Save Directory: {weight_save_dir}")
 print(f"Plot Save Directory: {plot_save_dir}")
+print(f"Dataset Root: {dataset_root}")
 print()
 
 # Data preprocessing
