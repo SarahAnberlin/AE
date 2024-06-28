@@ -9,6 +9,7 @@ from tqdm import tqdm
 import torchvision.utils as vutils
 import matplotlib.pyplot as plt
 import sys
+import os
 
 from utils.losses import loss_function  # Assuming you have defined this function
 
@@ -26,6 +27,12 @@ parser.add_argument('--save-interval', type=int, default=5, metavar='N',
                     help='interval for saving model weights (default: 5)')
 parser.add_argument('--validate-interval', type=int, default=1, metavar='N',
                     help='interval for validation (default: 1)')
+parser.add_argument('--image-save-dir', type=str, default='./resultimgs', metavar='DIR',
+                    help='directory to save validation images (default: ./resultimgs)')
+parser.add_argument('--weight-save-dir', type=str, default='./weights', metavar='DIR',
+                    help='directory to save model weights (default: ./weights)')
+parser.add_argument('--plot-save-dir', type=str, default='./plots', metavar='DIR',
+                    help='directory to save training and validation plots (default: ./plots)')
 args = parser.parse_args()
 
 # Define hyperparameters
@@ -35,6 +42,14 @@ epochs = args.epochs
 latent_dim = args.latent_dim
 save_interval = args.save_interval
 validate_interval = args.validate_interval
+image_save_dir = args.image_save_dir
+weight_save_dir = args.weight_save_dir
+plot_save_dir = args.plot_save_dir
+
+# Ensure directories exist, create if not
+os.makedirs(image_save_dir, exist_ok=True)
+os.makedirs(weight_save_dir, exist_ok=True)
+os.makedirs(plot_save_dir, exist_ok=True)
 
 # Log file setup
 log_filename = 'vae_training.log'
@@ -51,6 +66,9 @@ print(f"Epochs: {epochs}")
 print(f"Latent Dimension: {latent_dim}")
 print(f"Save Interval: {save_interval}")
 print(f"Validate Interval: {validate_interval}")
+print(f"Image Save Directory: {image_save_dir}")
+print(f"Weight Save Directory: {weight_save_dir}")
+print(f"Plot Save Directory: {plot_save_dir}")
 print()
 
 # Data preprocessing
@@ -127,7 +145,7 @@ for epoch in range(epochs):
             comparison = torch.cat([original_images[:5], validation_results[:5]])
 
             # Save the grid of images
-            vutils.save_image(comparison, f"./resultimgs/vae_validation_comparison_epoch_{epoch + 1}.png", nrow=5,
+            vutils.save_image(comparison, f"{image_save_dir}/vae_validation_comparison_epoch_{epoch + 1}.png", nrow=5,
                               normalize=True)
 
         avg_val_loss = val_loss / len(val_loader.dataset)
@@ -137,7 +155,7 @@ for epoch in range(epochs):
 
     # Save model weights
     if epoch % save_interval == 0:
-        torch.save(model.state_dict(), f"./weights/vae_epoch_{epoch + 1}.pth")
+        torch.save(model.state_dict(), f"{weight_save_dir}/vae_epoch_{epoch + 1}.pth")
 
     # Plotting training and validation losses
     plt.figure(figsize=(10, 6))
@@ -148,4 +166,4 @@ for epoch in range(epochs):
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(True)
-    plt.savefig('training_validation_losses.png')
+    plt.savefig(f"{plot_save_dir}/training_validation_losses.png")
