@@ -27,14 +27,8 @@ parser.add_argument('--save-interval', type=int, default=5, metavar='N',
                     help='interval for saving model weights (default: 5)')
 parser.add_argument('--validate-interval', type=int, default=1, metavar='N',
                     help='interval for validation (default: 1)')
-parser.add_argument('--image-save-dir', type=str, default='./resultimgs', metavar='DIR',
-                    help='directory to save validation images (default: ./resultimgs)')
-parser.add_argument('--weight-save-dir', type=str, default='./weights', metavar='DIR',
-                    help='directory to save model weights (default: ./weights)')
-parser.add_argument('--plot-save-dir', type=str, default='./plots', metavar='DIR',
-                    help='directory to save training and validation plots (default: ./plots)')
-parser.add_argument('--dataset-root', type=str, default='../../Dataset', metavar='DIR',
-                    help='root directory of CIFAR-10 dataset (default: ../../Dataset)')
+parser.add_argument('--save-root', type=str, default='./vae_results', metavar='DIR',
+                    help='root directory to save results, including images, weights, plots, and logs (default: ./vae_results)')
 args = parser.parse_args()
 
 # Define hyperparameters
@@ -44,19 +38,22 @@ epochs = args.epochs
 latent_dim = args.latent_dim
 save_interval = args.save_interval
 validate_interval = args.validate_interval
-image_save_dir = args.image_save_dir
-weight_save_dir = args.weight_save_dir
-plot_save_dir = args.plot_save_dir
-dataset_root = args.dataset_root
+save_root = args.save_root
+
+image_save_dir = os.path.join(save_root, 'resultimg')
+weight_save_dir = os.path.join(save_root, 'weights')
+plot_save_dir = os.path.join(save_root, 'plots')
+log_file_path = os.path.join(save_root, 'vae_training.log')
+dataset_dir = os.path.join(save_root, 'dataset')
 
 # Ensure directories exist, create if not
 os.makedirs(image_save_dir, exist_ok=True)
 os.makedirs(weight_save_dir, exist_ok=True)
 os.makedirs(plot_save_dir, exist_ok=True)
+os.makedirs(dataset_dir, exist_ok=True)
 
 # Log file setup
-log_filename = 'vae_training.log'
-log_file = open(log_filename, 'w')
+log_file = open(log_file_path, 'w')
 
 # Redirect stdout to log file
 sys.stdout = log_file
@@ -72,7 +69,7 @@ print(f"Validate Interval: {validate_interval}")
 print(f"Image Save Directory: {image_save_dir}")
 print(f"Weight Save Directory: {weight_save_dir}")
 print(f"Plot Save Directory: {plot_save_dir}")
-print(f"Dataset Root: {dataset_root}")
+print(f"Dataset Root: {dataset_dir}")
 print()
 
 # Data preprocessing
@@ -82,7 +79,7 @@ transform = transforms.Compose([
 ])
 
 # Load CIFAR-10 dataset
-train_dataset = datasets.CIFAR10(root=f'{dataset_root}', train=True, transform=transform, download=True)
+train_dataset = datasets.CIFAR10(root=f'{dataset_dir}', train=True, transform=transform, download=True)
 train_size = len(train_dataset)
 train_set, val_set = random_split(train_dataset, [int(train_size * 0.8), int(train_size * 0.2)])
 
