@@ -82,7 +82,7 @@ transform = transforms.Compose([
 ])
 
 # Load CIFAR-10 dataset
-train_dataset = datasets.CIFAR10(root='../../Dataset', train=True, transform=transform, download=True)
+train_dataset = datasets.CIFAR10(root=f'{dataset_root}', train=True, transform=transform, download=True)
 train_size = len(train_dataset)
 train_set, val_set = random_split(train_dataset, [int(train_size * 0.8), int(train_size * 0.2)])
 
