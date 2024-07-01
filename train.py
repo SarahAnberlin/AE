@@ -13,6 +13,15 @@ import os
 
 from utils.losses import loss_function  # Assuming you have defined this function
 
+import sys
+
+print("Python version")
+print(sys.version)
+print("Version info.")
+print(sys.version_info)
+
+
+
 # Argument Parser
 parser = argparse.ArgumentParser(description='Variational Autoencoder (VAE) for CIFAR-10')
 parser.add_argument('--batch-size', type=int, default=128, metavar='N',
