@@ -8,15 +8,10 @@ from models.VAE import VAE
 from tqdm import tqdm
 import torchvision.utils as vutils
 import matplotlib.pyplot as plt
-import sys
 import os
+import numpy as np
 
 from utils.losses import loss_function  # Assuming you have defined this function
-
-import sys
-
-
-
 
 # Argument Parser
 parser = argparse.ArgumentParser(description='Variational Autoencoder (VAE) for CIFAR-10')
@@ -58,32 +53,20 @@ os.makedirs(plot_save_dir, exist_ok=True)
 os.makedirs(dataset_dir, exist_ok=True)
 
 # Log file setup
-log_file = open(log_file_path, 'w')
+log_file = open(log_file_path, 'a', buffering=1)
 
-# Redirect stdout to log file
-sys.stdout = log_file
-
-print("Python version")
-print(sys.version)
-print("Version info.")
-print(sys.version_info)
-print("Python path:")
-for path in sys.path:
-    print(path)
-
-# Log hyperparameters
-print(f"Hyperparameters:")
-print(f"Batch Size: {batch_size}")
-print(f"Learning Rate: {learning_rate}")
-print(f"Epochs: {epochs}")
-print(f"Latent Dimension: {latent_dim}")
-print(f"Save Interval: {save_interval}")
-print(f"Validate Interval: {validate_interval}")
-print(f"Image Save Directory: {image_save_dir}")
-print(f"Weight Save Directory: {weight_save_dir}")
-print(f"Plot Save Directory: {plot_save_dir}")
-print(f"Dataset Root: {dataset_dir}")
-print()
+# Log hyperparameters to file
+log_file.write("Hyperparameters:\n")
+log_file.write(f"Batch Size: {batch_size}\n")
+log_file.write(f"Learning Rate: {learning_rate}\n")
+log_file.write(f"Epochs: {epochs}\n")
+log_file.write(f"Latent Dimension: {latent_dim}\n")
+log_file.write(f"Save Interval: {save_interval}\n")
+log_file.write(f"Validate Interval: {validate_interval}\n")
+log_file.write(f"Image Save Directory: {image_save_dir}\n")
+log_file.write(f"Weight Save Directory: {weight_save_dir}\n")
+log_file.write(f"Plot Save Directory: {plot_save_dir}\n")
+log_file.write(f"Dataset Root: {dataset_dir}\n\n")
 
 # Data preprocessing
 transform = transforms.Compose([
@@ -132,7 +115,7 @@ for epoch in range(epochs):
 
     # Print average training loss for the epoch and log it
     avg_train_loss = train_loss / len(train_loader.dataset)
-    print(f"Epoch {epoch + 1}, Training Loss: {avg_train_loss:.4f}")
+    log_file.write(f"Epoch {epoch + 1}, Training Loss: {avg_train_loss:.4f}\n")
     train_losses.append(avg_train_loss)
     train_epochs.append(epoch + 1)
 
@@ -163,7 +146,7 @@ for epoch in range(epochs):
                               normalize=True)
 
         avg_val_loss = val_loss / len(val_loader.dataset)
-        print(f"Epoch {epoch + 1}, Validation Loss: {avg_val_loss:.4f}")
+        log_file.write(f"Epoch {epoch + 1}, Validation Loss: {avg_val_loss:.4f}\n")
         val_losses.append(avg_val_loss)
         val_epochs.append(epoch + 1)
 
@@ -173,11 +156,14 @@ for epoch in range(epochs):
 
     # Plotting training and validation losses
     plt.figure(figsize=(10, 6))
-    plt.plot(train_epochs, train_losses, label='Training Loss', marker='o')
-    plt.plot(val_epochs, val_losses, label='Validation Loss', marker='s')
-    plt.title('Training and Validation Losses')
+    plt.plot(train_epochs, np.log(train_losses), label='Training Loss (log scale)', marker='o')
+    plt.plot(val_epochs, np.log(val_losses), label='Validation Loss (log scale)', marker='s')
+    plt.title('Training and Validation Losses (Log Scale)')
     plt.xlabel('Epochs')
-    plt.ylabel('Loss')
+    plt.ylabel('Loss (log scale)')
     plt.legend()
     plt.grid(True)
-    plt.savefig(f"{plot_save_dir}/training_validation_losses.png")
+    plt.savefig(f"{plot_save_dir}/training_validation_losses_logscale.png")
+
+# Close the log file
+log_file.close()
