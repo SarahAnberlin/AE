@@ -4,6 +4,7 @@ import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
 
+
 class ImageNetDataset(Dataset):
     def __init__(self, root_dir, split='train', transform=None):
         """
@@ -41,23 +42,18 @@ class ImageNetDataset(Dataset):
 
         return image, label
 
-# Usage example:
-# Define a transform to apply to the images
-transform = transforms.Compose([
-    transforms.Resize((256, 256)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5], inplace=True),
-])
 
-# Create the dataset
-imagenet_dataset = ImageNetDataset(root_dir='/path/to/imagenet', split='train', transform=transform)
+if __name__ == '__main__':
+    dataset_dir = '/dataset/sharedir/research/ImageNet'
 
-# Create a DataLoader
-from torch.utils.data import DataLoader
+    transform = transforms.Compose([
+        transforms.Resize((256, 256)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5], inplace=True),
+    ])
 
-dataloader = DataLoader(imagenet_dataset, batch_size=32, shuffle=True, num_workers=4)
-
-# Iterate through the dataset
-for images, labels in dataloader:
-    # Your training or validation code here
-    pass
+    train_set = ImageNetDataset(root_dir=dataset_dir, split='train', transform=transform)
+    print(train_set[0][0].shape)
+    print(len(train_set))
+    print(train_set[0][1].shape)
+    print(len(train_set[0]))

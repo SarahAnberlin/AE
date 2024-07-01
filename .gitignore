@@ -5,3 +5,4 @@
 /data/
 /vae_results/
 /selftest.py
+/pretrained_VAE_weight/

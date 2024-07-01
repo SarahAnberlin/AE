@@ -10,7 +10,7 @@ import torchvision.utils as vutils
 import matplotlib.pyplot as plt
 import os
 import numpy as np
-
+from ImagenetDataset import ImageNetDataset
 from utils.losses import loss_function  # Assuming you have defined this function
 
 # Argument Parser
@@ -27,7 +27,7 @@ parser.add_argument('--save-interval', type=int, default=5, metavar='N',
                     help='interval for saving model weights (default: 5)')
 parser.add_argument('--validate-interval', type=int, default=1, metavar='N',
                     help='interval for validation (default: 1)')
-parser.add_argument('--experiment-name', type=str, required=True, metavar='NAME',
+parser.add_argument('--name', type=str, required=True, metavar='NAME',
                     help='name of the experiment')
 parser.add_argument('--save-root', type=str, default='./vae_results', metavar='DIR',
                     help='root directory to save results, including images, weights, plots, and logs (default: ./vae_results)')
@@ -40,7 +40,7 @@ epochs = args.epochs
 latent_dim = args.latent_dim
 save_interval = args.save_interval
 validate_interval = args.validate_interval
-experiment_name = args.experiment_name
+experiment_name = args.name
 save_root = os.path.join(args.save_root, experiment_name)
 
 image_save_dir = os.path.join(save_root, 'resultimg')
@@ -74,14 +74,16 @@ log_file.write(f"Dataset Root: {dataset_dir}\n\n")
 
 # Data preprocessing
 transform = transforms.Compose([
+    transforms.Resize((256, 256)),
     transforms.ToTensor(),
-    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5], inplace=True),
 ])
 
 # Load CIFAR-10 dataset
-train_dataset = datasets.CIFAR10(root=dataset_dir, train=True, transform=transform, download=True)
-train_size = len(train_dataset)
-train_set, val_set = random_split(train_dataset, [int(train_size * 0.8), int(train_size * 0.2)])
+train_set = ImageNetDataset(root_dir=dataset_dir, split='train', transform=transform)
+val_set = ImageNetDataset(root_dir=dataset_dir, split='val', transform=transform)
+
+print(train_set[0][0].shape)
 
 train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False)
