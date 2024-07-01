@@ -15,10 +15,6 @@ from utils.losses import loss_function  # Assuming you have defined this functio
 
 import sys
 
-print("Python version")
-print(sys.version)
-print("Version info.")
-print(sys.version_info)
 
 
 
@@ -66,6 +62,12 @@ log_file = open(log_file_path, 'w')
 
 # Redirect stdout to log file
 sys.stdout = log_file
+
+print("Python version")
+print(sys.version)
+print("Version info.")
+print(sys.version_info)
+
 
 # Log hyperparameters
 print(f"Hyperparameters:")
