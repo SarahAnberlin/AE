@@ -56,3 +56,7 @@ if __name__ == '__main__':
     print(train_set[0][0].shape)
     print(len(train_set))
     print(len(train_set[0]))
+    val_set = ImageNetDataset(root_dir=dataset_dir, split='val', transform=transform)
+    print(val_set[0][0].shape)
+    print(len(val_set))
+    print(len(val_set[0]))
