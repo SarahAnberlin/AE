@@ -67,7 +67,9 @@ print("Python version")
 print(sys.version)
 print("Version info.")
 print(sys.version_info)
-
+print("Python path:")
+for path in sys.path:
+    print(path)
 
 # Log hyperparameters
 print(f"Hyperparameters:")
