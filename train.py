@@ -27,6 +27,8 @@ parser.add_argument('--save-interval', type=int, default=5, metavar='N',
                     help='interval for saving model weights (default: 5)')
 parser.add_argument('--validate-interval', type=int, default=1, metavar='N',
                     help='interval for validation (default: 1)')
+parser.add_argument('--experiment-name', type=str, required=True, metavar='NAME',
+                    help='name of the experiment')
 parser.add_argument('--save-root', type=str, default='./vae_results', metavar='DIR',
                     help='root directory to save results, including images, weights, plots, and logs (default: ./vae_results)')
 args = parser.parse_args()
@@ -38,12 +40,13 @@ epochs = args.epochs
 latent_dim = args.latent_dim
 save_interval = args.save_interval
 validate_interval = args.validate_interval
-save_root = args.save_root
+experiment_name = args.experiment_name
+save_root = os.path.join(args.save_root, experiment_name)
 
 image_save_dir = os.path.join(save_root, 'resultimg')
 weight_save_dir = os.path.join(save_root, 'weights')
 plot_save_dir = os.path.join(save_root, 'plots')
-log_file_path = os.path.join(save_root, 'vae_training.log')
+log_file_path = os.path.join(save_root, f'{experiment_name}_training.log')
 dataset_dir = os.path.join(save_root, 'dataset')
 
 # Ensure directories exist, create if not
@@ -63,6 +66,7 @@ log_file.write(f"Epochs: {epochs}\n")
 log_file.write(f"Latent Dimension: {latent_dim}\n")
 log_file.write(f"Save Interval: {save_interval}\n")
 log_file.write(f"Validate Interval: {validate_interval}\n")
+log_file.write(f"Experiment Name: {experiment_name}\n")
 log_file.write(f"Image Save Directory: {image_save_dir}\n")
 log_file.write(f"Weight Save Directory: {weight_save_dir}\n")
 log_file.write(f"Plot Save Directory: {plot_save_dir}\n")
